@@ -1,0 +1,129 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {};
+	objectVersion = 56;
+	objects = {
+
+		A10000000000000000000001 /* LocalServiceBarApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000001 /* LocalServiceBarApp.swift */; };
+		A10000000000000000000002 /* ProcessScanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000002 /* ProcessScanner.swift */; };
+		A10000000000000000000003 /* ServiceMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000003 /* ServiceMonitor.swift */; };
+		A10000000000000000000004 /* ServicePopoverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000004 /* ServicePopoverView.swift */; };
+
+		A20000000000000000000001 /* LocalServiceBarApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalServiceBarApp.swift; sourceTree = "<group>"; };
+		A20000000000000000000002 /* ProcessScanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessScanner.swift; sourceTree = "<group>"; };
+		A20000000000000000000003 /* ServiceMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceMonitor.swift; sourceTree = "<group>"; };
+		A20000000000000000000004 /* ServicePopoverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServicePopoverView.swift; sourceTree = "<group>"; };
+		A20000000000000000000005 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A20000000000000000000006 /* LocalServiceBar.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LocalServiceBar.app; sourceTree = BUILT_PRODUCTS_DIR; };
+
+		A30000000000000000000001 /* LocalServiceBar */ = {
+			isa = PBXGroup;
+			children = (
+				A20000000000000000000001 /* LocalServiceBarApp.swift */,
+				A20000000000000000000002 /* ProcessScanner.swift */,
+				A20000000000000000000003 /* ServiceMonitor.swift */,
+				A20000000000000000000004 /* ServicePopoverView.swift */,
+				A20000000000000000000005 /* Info.plist */,
+			);
+			path = LocalServiceBar;
+			sourceTree = "<group>";
+		};
+		A30000000000000000000002 = {
+			isa = PBXGroup;
+			children = (
+				A30000000000000000000001 /* LocalServiceBar */,
+				A30000000000000000000003 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		A30000000000000000000003 /* Products */ = {
+			isa = PBXGroup;
+			children = (A20000000000000000000006 /* LocalServiceBar.app */);
+			name = Products;
+			sourceTree = "<group>";
+		};
+
+		A40000000000000000000001 /* LocalServiceBar */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A80000000000000000000002 /* Build configuration list for PBXNativeTarget "LocalServiceBar" */;
+			buildPhases = (
+				A50000000000000000000001 /* Sources */,
+				A50000000000000000000002 /* Frameworks */,
+				A50000000000000000000003 /* Resources */,
+			);
+			buildRules = ();
+			dependencies = ();
+			name = LocalServiceBar;
+			productName = LocalServiceBar;
+			productReference = A20000000000000000000006 /* LocalServiceBar.app */;
+			productType = "com.apple.product-type.application";
+		};
+
+		A60000000000000000000001 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastUpgradeCheck = 1600;
+				TargetAttributes = { A40000000000000000000001 = { CreatedOnToolsVersion = 16.0; }; };
+			};
+			buildConfigurationList = A80000000000000000000001 /* Build configuration list for PBXProject "LocalServiceBar" */;
+			compatibilityVersion = "Xcode 14.0";
+			mainGroup = A30000000000000000000002;
+			productRefGroup = A30000000000000000000003 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (A40000000000000000000001 /* LocalServiceBar */);
+		};
+
+		A50000000000000000000001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A10000000000000000000001 /* LocalServiceBarApp.swift in Sources */,
+				A10000000000000000000002 /* ProcessScanner.swift in Sources */,
+				A10000000000000000000003 /* ServiceMonitor.swift in Sources */,
+				A10000000000000000000004 /* ServicePopoverView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A50000000000000000000002 /* Frameworks */ = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+		A50000000000000000000003 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+
+		A70000000000000000000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 4;
+				ENABLE_APP_SANDBOX = NO;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = LocalServiceBar/Info.plist;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.localservicebar.app;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		A70000000000000000000002 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 4;
+				ENABLE_APP_SANDBOX = NO;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = LocalServiceBar/Info.plist;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.localservicebar.app;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		A80000000000000000000001 /* Build configuration list for PBXProject "LocalServiceBar" */ = {isa = XCConfigurationList; buildConfigurations = (A70000000000000000000001 /* Debug */, A70000000000000000000002 /* Release */); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+		A80000000000000000000002 /* Build configuration list for PBXNativeTarget "LocalServiceBar" */ = {isa = XCConfigurationList; buildConfigurations = (A70000000000000000000001 /* Debug */, A70000000000000000000002 /* Release */); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+	};
+	rootObject = A60000000000000000000001 /* Project object */;
+}
