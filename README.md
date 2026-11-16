@@ -7,7 +7,8 @@
 ## 功能
 
 - 点击状态栏图标展开面板，每秒刷新各服务整棵进程树的内存和 CPU；关闭面板后停止扫描。
-- 显示项目目录名和启动命令，可一键打开项目文件夹。
+- 自动检测服务进程树监听的 TCP 端口，在项目名旁显示（如 `:3001`）；点击项目名用默认浏览器打开 `http://localhost:端口`。监听了多个端口时取最小的那个，其余端口显示在鼠标悬停提示里。
+- 点击启动命令或路径，在 Finder 中打开项目文件夹。
 - 对服务发送 `SIGTERM` 停止，同时记下可执行文件、参数和工作目录；之后可在“已停止”列表里一键重启，或从列表移除。
 - 支持登录时自动启动；如果系统要求批准，面板里可以直接跳到登录项设置。
 - 不显示 Dock 图标和独立窗口；休眠唤醒、切换屏幕、菜单栏服务重启后会自动重新注册状态栏图标。
@@ -74,7 +75,7 @@ codesign --force --sign - build/LocalServiceBar.app
 
 ## 实现说明
 
-- **进程信息**：用 `proc_listpids`、`proc_pidinfo`、`proc_pid_rusage` 和 `sysctl(KERN_PROCARGS2)` 读取进程列表、父子关系、内存占用（`phys_footprint`）、CPU 时间、启动参数和工作目录，不依赖 `ps` 或 `lsof`。
+- **进程信息**：用 `proc_listpids`、`proc_pidinfo`、`proc_pid_rusage` 和 `sysctl(KERN_PROCARGS2)` 读取进程列表、父子关系、内存占用（`phys_footprint`）、CPU 时间、启动参数和工作目录；监听端口通过 `PROC_PIDLISTFDS` + `proc_pidfdinfo(PROC_PIDFDSOCKETINFO)` 读取 LISTEN 状态的 TCP socket。不依赖 `ps` 或 `lsof`。
 - **npm / npx 的参数**：npm 会改写 `process.title`，内核里的 argv 只剩 `npm run dev` 这样的标题，其余参数为空。扫描时按标题还原成 `node <node 同级 lib>/node_modules/npm/bin/npm-cli.js run dev`，识别和重启都按它处理。还原时按空格拆分标题，参数本身带空格时重启可能不准确。
 - **npm 全局安装的 bun**：`bun.exe` 与 `bunx.exe` 是硬链接，内核返回的路径可能是其中任意一个，统一按同目录下的 `bun.exe` 处理。
 - **重启时的 PATH**：重启服务不会恢复原进程的环境变量，项目需要的变量应由项目自己的 `.env` 加载逻辑提供。登录自启时 launchd 提供的 PATH 只有 `/usr/bin:/bin:/usr/sbin:/sbin`，`#!/usr/bin/env node` 会找不到 node，因此重启时会把 node / bun 所在目录补到 PATH 最前面。

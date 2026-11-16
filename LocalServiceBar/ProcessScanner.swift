@@ -159,8 +159,15 @@ struct ServiceProcess: Identifiable, Hashable {
     let residentBytes: UInt64
     let cpuPercent: Double
     let processCount: Int
+    /// 进程树中处于 LISTEN 状态的 TCP 端口，升序。
+    var listeningPorts: [UInt16] = []
 
     var id: pid_t { pid }
+
+    /// 取最小的监听端口，如 vite 同时监听 3001 和内部高位端口时选 3001。
+    var browserURL: URL? {
+        listeningPorts.first.flatMap { URL(string: "http://localhost:\($0)") }
+    }
     var name: String {
         let directoryName = URL(fileURLWithPath: workingDirectory).lastPathComponent
         if !directoryName.isEmpty, directoryName != "/" {
@@ -257,8 +264,10 @@ final class ProcessScanner {
             let family = descendants(of: launcher.pid, childrenByParent: childrenByParent)
             var residentBytes: UInt64 = 0
             var cpuPercent = 0.0
+            var ports: Set<UInt16> = []
 
             for memberPID in family {
+                ports.formUnion(listeningTCPPorts(for: memberPID))
                 guard let identity = identities[memberPID],
                       let usage = resourceUsage(for: memberPID) else {
                     continue
@@ -289,7 +298,8 @@ final class ProcessScanner {
                 workingDirectory: launcher.workingDirectory,
                 residentBytes: residentBytes,
                 cpuPercent: cpuPercent,
-                processCount: family.count
+                processCount: family.count,
+                listeningPorts: ports.sorted()
             )
         }
 
@@ -339,6 +349,35 @@ final class ProcessScanner {
 
         let startToken = info.pbi_start_tvsec &* 1_000_000 &+ info.pbi_start_tvusec
         return ProcessIdentity(parentPID: pid_t(info.pbi_ppid), startToken: startToken)
+    }
+
+    /// 遍历进程的文件描述符，找出处于 LISTEN 状态的 TCP socket 端口。
+    private func listeningTCPPorts(for pid: pid_t) -> [UInt16] {
+        let requiredBytes = proc_pidinfo(pid, PROC_PIDLISTFDS, 0, nil, 0)
+        guard requiredBytes > 0 else { return [] }
+
+        let stride = MemoryLayout<proc_fdinfo>.stride
+        var descriptors = [proc_fdinfo](repeating: proc_fdinfo(), count: Int(requiredBytes) / stride + 8)
+        let actualBytes = descriptors.withUnsafeMutableBytes { buffer in
+            proc_pidinfo(pid, PROC_PIDLISTFDS, 0, buffer.baseAddress, Int32(buffer.count))
+        }
+        guard actualBytes > 0 else { return [] }
+
+        var ports: [UInt16] = []
+        for descriptor in descriptors.prefix(Int(actualBytes) / stride)
+        where descriptor.proc_fdtype == UInt32(PROX_FDTYPE_SOCKET) {
+            var info = socket_fdinfo()
+            let size = Int32(MemoryLayout<socket_fdinfo>.size)
+            guard proc_pidfdinfo(pid, descriptor.proc_fd, PROC_PIDFDSOCKETINFO, &info, size) == size,
+                  info.psi.soi_kind == Int32(SOCKINFO_TCP),
+                  info.psi.soi_proto.pri_tcp.tcpsi_state == TSI_S_LISTEN else {
+                continue
+            }
+            // insi_lport 是网络字节序
+            let rawPort = UInt16(truncatingIfNeeded: info.psi.soi_proto.pri_tcp.tcpsi_ini.insi_lport)
+            ports.append(UInt16(bigEndian: rawPort))
+        }
+        return ports
     }
 
     private func resourceUsage(for pid: pid_t) -> rusage_info_v4? {

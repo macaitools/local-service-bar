@@ -131,21 +131,19 @@ private struct RunningServiceRow: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 5) {
+            HStack(spacing: 7) {
+                Circle()
+                    .fill(.green)
+                    .frame(width: 7, height: 7)
+                nameLabel
+                Spacer(minLength: 4)
+                Text("\(process.processCount) 个进程 · PID \(process.pid)")
+                    .font(.system(size: 10, design: .monospaced))
+                    .foregroundStyle(.tertiary)
+            }
+
             Button(action: onOpenFolder) {
                 VStack(alignment: .leading, spacing: 5) {
-                    HStack(spacing: 7) {
-                        Circle()
-                            .fill(.green)
-                            .frame(width: 7, height: 7)
-                        Text(name)
-                            .font(.system(size: 12, weight: .medium))
-                            .lineLimit(1)
-                        Spacer(minLength: 4)
-                        Text("\(process.processCount) 个进程 · PID \(process.pid)")
-                            .font(.system(size: 10, design: .monospaced))
-                            .foregroundStyle(.tertiary)
-                    }
-
                     Text(process.commandLine)
                         .font(.system(size: 10, design: .monospaced))
                         .foregroundStyle(.secondary)
@@ -179,6 +177,45 @@ private struct RunningServiceRow: View {
             .foregroundStyle(.secondary)
         }
         .padding(.vertical, 3)
+    }
+
+    /// 有监听端口时项目名可点击，用默认浏览器打开 http://localhost:端口。
+    @ViewBuilder
+    private var nameLabel: some View {
+        if let url = process.browserURL, let port = process.listeningPorts.first {
+            Button {
+                NSWorkspace.shared.open(url)
+            } label: {
+                HStack(spacing: 4) {
+                    Text(name)
+                        .font(.system(size: 12, weight: .medium))
+                        .lineLimit(1)
+                    Text(":\(port)")
+                        .font(.system(size: 11, design: .monospaced))
+                    Image(systemName: "arrow.up.right.square")
+                        .font(.system(size: 10))
+                }
+                .foregroundStyle(Color.accentColor)
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .help(urlHelp(url))
+            .accessibilityLabel("在浏览器打开 \(url.absoluteString)")
+            .onHover { inside in
+                if inside { NSCursor.pointingHand.push() } else { NSCursor.pop() }
+            }
+        } else {
+            Text(name)
+                .font(.system(size: 12, weight: .medium))
+                .lineLimit(1)
+                .help("未检测到监听端口")
+        }
+    }
+
+    private func urlHelp(_ url: URL) -> String {
+        let others = process.listeningPorts.dropFirst().map(String.init)
+        let base = "在默认浏览器打开 \(url.absoluteString)"
+        return others.isEmpty ? base : "\(base)\n其他监听端口：\(others.joined(separator: "、"))"
     }
 
     private var memoryText: String {
