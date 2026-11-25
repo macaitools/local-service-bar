@@ -9,7 +9,7 @@ struct ServicePopoverView: View {
             header
 
             List {
-                Section("开发服务 · \(monitor.runningProcesses.count)") {
+                Section {
                     if monitor.runningProcesses.isEmpty {
                         if monitor.isLoading {
                             HStack(spacing: 8) {
@@ -32,6 +32,23 @@ struct ServicePopoverView: View {
                                 onOpenFolder: { openFolder(process.workingDirectory) },
                                 onStop: { monitor.stop(process) }
                             )
+                        }
+                    }
+                } header: {
+                    HStack {
+                        Text("开发服务 · \(monitor.runningProcesses.count)")
+                        Spacer()
+                        if !monitor.runningProcesses.isEmpty {
+                            Button {
+                                monitor.runningProcesses.forEach { monitor.stop($0) }
+                            } label: {
+                                Label("全部停止", systemImage: "stop.fill")
+                                    .font(.system(size: 10))
+                            }
+                            .buttonStyle(.borderless)
+                            .foregroundStyle(.secondary)
+                            .help("停止全部开发服务")
+                            .accessibilityLabel("全部停止")
                         }
                     }
                 }
